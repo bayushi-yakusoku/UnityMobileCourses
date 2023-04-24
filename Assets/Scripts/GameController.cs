@@ -5,12 +5,12 @@ using UnityEngine.InputSystem;
 
 public class GameController : MonoBehaviour
 {
-    private Camera mainCamera;
+    [SerializeField] Rigidbody2D currentBall;
 
     // Start is called before the first frame update
     void Start()
     {
-        mainCamera = Camera.main;
+
     }
 
     // Update is called once per frame
@@ -18,9 +18,12 @@ public class GameController : MonoBehaviour
     {
         if(Touchscreen.current.primaryTouch.press.isPressed)
         {
+            // Prevent the current ball from being affectede by physics
+            currentBall.isKinematic = true;
+
             Vector2 screenPosition = Touchscreen.current.primaryTouch.position.ReadValue();
 
-            Vector2 worldPosition = mainCamera.ScreenToWorldPoint(screenPosition);
+            Vector2 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
 
             string msg = string.Concat(
                     "Screen is pressed at position: ", screenPosition, "\n",
@@ -28,6 +31,19 @@ public class GameController : MonoBehaviour
                 );
 
             Debug.Log(msg);
+
+            if (float.IsInfinity(screenPosition.x) || float.IsInfinity(screenPosition.y))
+            {
+                Debug.Log("Infinity detected!");
+                return;
+            }
+
+            currentBall.position = worldPosition;
+        }
+        else
+        {
+            // current ball should be affected by physics
+            currentBall.isKinematic = false;
         }
     }
 }
