@@ -5,12 +5,16 @@ using UnityEngine.InputSystem;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] Rigidbody2D currentBall;
+    [SerializeField] Rigidbody2D pivotPoint;
+    [SerializeField] GameObject prefabBall;
+
+    private GameObject currentBall;
+    private Rigidbody2D currentBallBody;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        SpawnBall();
     }
 
     // Update is called once per frame
@@ -19,7 +23,7 @@ public class GameController : MonoBehaviour
         if(Touchscreen.current.primaryTouch.press.isPressed)
         {
             // Prevent the current ball from being affectede by physics
-            currentBall.isKinematic = true;
+            currentBallBody.isKinematic = true;
 
             Vector2 screenPosition = Touchscreen.current.primaryTouch.position.ReadValue();
 
@@ -38,12 +42,22 @@ public class GameController : MonoBehaviour
                 return;
             }
 
-            currentBall.position = worldPosition;
+            currentBallBody.position = worldPosition;
         }
         else
         {
             // current ball should be affected by physics
-            currentBall.isKinematic = false;
+            currentBallBody.isKinematic = false;
         }
+    }
+
+    void SpawnBall()
+    {
+        currentBall = Instantiate(prefabBall, pivotPoint.position, Quaternion.identity);
+
+        currentBallBody = currentBall.GetComponent<Rigidbody2D>();
+        SpringJoint2D currentBallJoint = currentBall.GetComponent<SpringJoint2D>();
+
+        currentBallJoint.connectedBody = pivotPoint;
     }
 }
