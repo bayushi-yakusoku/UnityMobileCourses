@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour
 {
-    private Transform intialPosition;
+    private Rigidbody2D body;
+    private SpringJoint2D joint;
 
     Vector2 target;
     public Vector2 Target
@@ -28,9 +29,35 @@ public class BallController : MonoBehaviour
         
     }
 
-    void Launch()
+    private void Awake()
     {
-
+        body = GetComponent<Rigidbody2D>();
+        joint = GetComponent<SpringJoint2D>();
     }
 
+    public Vector2 Position
+    {
+        get => body.position;
+        set
+        {
+            body.position = value;
+        }
+    }
+
+    public Rigidbody2D ConnectedBody
+    {
+        get => joint.connectedBody;
+        set
+        {
+            if (joint.connectedBody == value) 
+                return;
+
+            joint.connectedBody = value;
+        }
+    }
+
+    public void Launch()
+    {
+        body.isKinematic = false;
+    }
 }

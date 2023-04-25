@@ -9,7 +9,7 @@ public class GameController : MonoBehaviour
     [SerializeField] GameObject prefabBall;
 
     private GameObject currentBall;
-    private Rigidbody2D currentBallBody;
+    private BallController currentBallController;
 
     // Start is called before the first frame update
     void Start()
@@ -34,9 +34,8 @@ public class GameController : MonoBehaviour
             if (currentBall)
             {
                 // current ball should be affected by physics
-                currentBallBody.isKinematic = false;
+                currentBallController.Launch();
                 currentBall = null;
-                currentBallBody = null;
             }
         }
     }
@@ -45,10 +44,9 @@ public class GameController : MonoBehaviour
     {
         currentBall = Instantiate(prefabBall, pivotPoint.position, Quaternion.identity);
 
-        currentBallBody = currentBall.GetComponent<Rigidbody2D>();
-        SpringJoint2D currentBallJoint = currentBall.GetComponent<SpringJoint2D>();
-
-        currentBallJoint.connectedBody = pivotPoint;
+        currentBallController = currentBall.GetComponent<BallController>();
+        currentBallController.ConnectedBody = pivotPoint;
+        currentBallController.Position = Vector2.zero;
     }
 
     void MoveBall()
@@ -70,7 +68,7 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        currentBallBody.position = worldPosition;
+        currentBallController.Position = worldPosition;
 
     }
 }
