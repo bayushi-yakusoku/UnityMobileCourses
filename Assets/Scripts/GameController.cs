@@ -7,14 +7,22 @@ public class GameController : MonoBehaviour
 {
     [SerializeField] Rigidbody2D pivotPoint;
     [SerializeField] GameObject prefabBall;
+    [SerializeField] float thrust;
 
     private GameObject currentBall;
     private BallController currentBallController;
+
+    private List<GameObject> listBalls;
 
     // Start is called before the first frame update
     void Start()
     {
 
+    }
+
+    private void Awake()
+    {
+        listBalls = new List<GameObject>();
     }
 
     // Update is called once per frame
@@ -35,6 +43,7 @@ public class GameController : MonoBehaviour
             {
                 // current ball should be affected by physics
                 currentBallController.Launch();
+                listBalls.Add(currentBall);
                 currentBall = null;
             }
         }
@@ -45,8 +54,10 @@ public class GameController : MonoBehaviour
         currentBall = Instantiate(prefabBall, pivotPoint.position, Quaternion.identity);
 
         currentBallController = currentBall.GetComponent<BallController>();
-        currentBallController.ConnectedBody = pivotPoint;
+        //currentBallController.ConnectedBody = pivotPoint;
         currentBallController.Position = Vector2.zero;
+        currentBallController.Target = pivotPoint.position;
+        currentBallController.Thrust = thrust;
     }
 
     void MoveBall()

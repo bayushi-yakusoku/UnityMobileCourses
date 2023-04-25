@@ -7,6 +7,16 @@ public class BallController : MonoBehaviour
     private Rigidbody2D body;
     private SpringJoint2D joint;
 
+    float thrust = 0f;
+    public float Thrust
+    {
+        get => thrust;
+        set
+        {
+            thrust = value;
+        }
+    }
+
     Vector2 target;
     public Vector2 Target
     {
@@ -33,6 +43,7 @@ public class BallController : MonoBehaviour
     {
         body = GetComponent<Rigidbody2D>();
         joint = GetComponent<SpringJoint2D>();
+        joint.enabled = false;
     }
 
     public Vector2 Position
@@ -49,6 +60,8 @@ public class BallController : MonoBehaviour
         get => joint.connectedBody;
         set
         {
+            joint.enabled = true;
+
             if (joint.connectedBody == value) 
                 return;
 
@@ -59,5 +72,6 @@ public class BallController : MonoBehaviour
     public void Launch()
     {
         body.isKinematic = false;
+        body.AddForce((target - body.position) * thrust, ForceMode2D.Impulse);
     }
 }
